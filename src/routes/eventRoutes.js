@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const EventCtrl = require('../controllers/eventControllers');
-console.log(EventCtrl)
 
 // POST to /events to create a new event
 router.post('/events', EventCtrl.createNewEvent)
@@ -17,5 +16,7 @@ router.put('/events/:id', EventCtrl.updateSingleEvent)
 
 // DELETE request to /events/:id to dete a single event
 router.delete('/events/:id', EventCtrl.deleteSingleEvent)
+
+
 
 module.exports = router;
