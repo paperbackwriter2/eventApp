@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose')
 
-const url = 'mongodb+srv://sample_user:<password>@my-sample-cluster-b3ugy.mongodb.net/<dbname>?retryWrites=true&w=majority'
+const url = 'mongodb+srv://laurel:<password>@cluster0.mm9cx.mongodb.net/EventsDB?retryWrites=true&w=majority'
 const connectionParams={
     useNewUrlParser: true,
     useCreateIndex: true,
