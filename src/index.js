@@ -7,6 +7,10 @@ const dbSetup = require('./database/setup.js')
 const eventRoutes = require('./routes/eventRoutes')
 const authRoutes = require('./routes/authRoutes')
 
+// SEEDERS
+const {seedAdmin} = require('./seeders/admin')
+console.log(seedAdmin())
+
 app.use(express.json())
 
 // SETUP DB
@@ -16,5 +20,3 @@ app.use('/auth', authRoutes)
 app.use(eventRoutes)
 
 app.listen(port, () => console.log(`app listening on port ${port}`));
-
-

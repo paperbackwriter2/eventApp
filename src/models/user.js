@@ -3,7 +3,8 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     firstName: {
         type: String,
@@ -15,6 +16,11 @@ const userSchema = new Schema({
     },
     password: {
         type: String
+    },
+    role: {
+        type: String,
+        enum: ["regular", "admin"],
+        default: "regular"
     }
 })
 
