@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
-const port = 4000;
+require('dotenv').config()
+// console.log(process.env)
+
+
+const port = process.env.PORT || 4000;
 const dbSetup = require('./database/setup.js')
 
 // Require Routes
@@ -9,7 +13,7 @@ const authRoutes = require('./routes/authRoutes')
 
 // SEEDERS
 const {seedAdmin} = require('./seeders/admin')
-console.log(seedAdmin())
+// console.log(seedAdmin())
 
 app.use(express.json())
 

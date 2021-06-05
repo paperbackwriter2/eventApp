@@ -1,8 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const secret = "superSECUREsecret";
-const expiry = 3600;
+const{createToken} = require('../services/jwtService');
 
 exports.registerNewUser = (req, res) => {
     // fetch user details from req body
@@ -12,11 +10,9 @@ exports.registerNewUser = (req, res) => {
             return res.status(500).json({err})
         } 
         if (existingUser) {
-            //
-            return res.status(500).json({existingUser});
             return res.status(400).json({message: "user with this email already exists"})
         }
-        User.create({
+        User.create({ 
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email
@@ -33,37 +29,23 @@ exports.registerNewUser = (req, res) => {
                     if (err) {
                         return res.status(500).json({err})
                     }
-                    //
-                    // return res.status(500).json({hashedPassword})
                     // save password to db
                     newUser.password = hashedPassword;
                     newUser.save((err, savedUser) => {
                         if (err) {
                             return res.status(500).json({err})
-                    
                         }
-
-                        // create jwt for user
-                        jwt.sign(
-                            {
-                                id: newUser._id,
-                                email: newUser.email,
-                                firstName: newUser.firstName,
-                                lastName: newUser.lastName,
-                                role: newUser.role
-                            }, secret, ({expiresIn: expiry}, (err, token) => {
-                                if (err) {
-                                    return res.status(500).json({err})
-                                }
-                            return res.status(200).json({
-                                message: "user registration successful",
-                                token
-                            })
-                            })
-                        )
+                        let token = createToken(newUser);
+                        if(!token) {
+                            return res.status(500).json({message: "Could not be authenticated. Please login."})
+                        }
+                        return res.status(200).json({
+                            message: "user registration successful",
+                            token
+                        })
+                        })
                     })
                 })
-            })
             })
         })
     }
@@ -84,29 +66,37 @@ exports.loginUser = (req, res) => {
         if(!foundUser) {
             return res.status(401).json({message: "incorrect email"})
         } 
+        // check if password is correct
         let match = bcrypt.compareSync(req.body.password, foundUser.password);
         if(!match) {
             return res.status(401).json({message: "incorrect password"})
         } 
         // create a token
-        jwt.sign({
-            id: foundUser._id,
-            email: foundUser.email,
-            firstName: foundUser.firstName,
-            lastName: foundUser.lastName,
-            role: foundUser.role
-        }, secret, {
-        expiresIn: expiry
-    }, (err, token) => {
-        if(err) {
-            return res.status(500).json({err})
+        let token = createToken(foundUser);
+        if (!token){
+            return res.status(500).json({message: "Sorry, we could not authenticate. Please login."})
         }
+        // return token to user
         return res.status(200).json({
             message: "user logged in",
             token
         })
     })
-    // check if password is correct
-    // send token
-})
 }
+
+// create jwt for user
+// let token = createToken(newUser)
+// if(!token){
+//     return res.status(500).json({message: "sorry, we could not authenticate you. please login."})
+// }
+// jwt.sign(
+//     {
+//         id: newUser._id,
+//         email: newUser.email,
+//         firstName: newUser.firstName,
+//         lastName: newUser.lastName,
+//         role: newUser.role
+//     }, secret, ({expiresIn: expiry}, (err, token) => {
+//         if (err) {
+//             return res.status(500).json({err})
+//         }
