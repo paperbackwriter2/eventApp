@@ -7,25 +7,24 @@ exports.createNewEvent = function(req, res) {
     // retrieve new event details from req body
     // get a photo from API which corresponds to event type
     let imageURL = ''
-    request(`https://imagegen.herokuapp.com/?category=${req.body.category}`, { json: true }, (err, res, body) => {
+    request(`https://imagegen.herokuapp.com/?category=${req.body.category}`, { json: true }, (err, response, body) => {
     if (err) { 
         return console.log(err); 
     }
     imageURL = body.image;
-    });
-
     Event.create({
         title: req.body.title,
         category: req.body.category,
         cost: req.body.cost,
         image: imageURL
     }, (err, newEvent) => {
-        if (err) {
-            return res.status(500).json({message: err})
-        } else {
-            return res.status(200).json({message: "new event created", newEvent})
-        }
+    if (err) {
+        return res.status(500).json({message: err})
+    } else {
+        return res.status(200).json({message: "new event created", newEvent})
+    }
     })
+    });
 } 
 
 exports.fetchEvents = (req, res) => {
@@ -91,6 +90,8 @@ exports.deleteSingleEvent = (req, res) => {
     })
 } 
 
+
+
 // exports.createNewEvent = function(req, res) {
 //     // retrieve new event details from req body
 //     // get a photo from API which corresponds to event type
@@ -99,10 +100,8 @@ exports.deleteSingleEvent = (req, res) => {
 //     if (err) { 
 //         return console.log(err); 
 //     }
-//     console.log(body.image);
 //     imageURL = body.image;
 //     });
-//     console.log(imageURL)
 
 //     Event.create({
 //         title: req.body.title,
